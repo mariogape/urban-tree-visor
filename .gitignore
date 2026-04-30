@@ -1,0 +1,18 @@
+# Source layers (large, kept outside the repo)
+source/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs and temporary builds
+*.log
+_tmp/

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Visor — Cáceres · Exposición al viento</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="https://darwingeospatial.com" target="_blank" rel="noopener">
+    <img class="brand-logo" src="assets/darwin-logo.png" alt="Darwin Geospatial" />
+    <div class="brand-text">
+      <div class="brand-label">Darwin × INFFE</div>
+      <div class="brand-title">Cáceres · Exposición al viento</div>
+    </div>
+  </a>
+  <div class="kpis">
+    <div class="kpi"><div class="kn" id="kpi-trees">—</div><div class="kl">árboles</div></div>
+    <div class="kpi"><div class="kn" id="kpi-priority">—</div><div class="kl">prioritarios</div></div>
+  </div>
+</header>
+
+<aside class="panel" id="panel">
+  <div class="panel-section">
+    <h3>Capa de exposición</h3>
+    <label class="row">
+      <input type="checkbox" id="toggle-exposure" checked />
+      <span>Mostrar capa</span>
+    </label>
+    <label class="row">
+      <span>Opacidad</span>
+      <input type="range" id="opacity-exposure" min="0" max="1" step="0.05" value="0.75" />
+    </label>
+    <div class="legend">
+      <div class="legend-bar"></div>
+      <div class="legend-labels">
+        <span>0 abrigado</span>
+        <span>50</span>
+        <span>100 expuesto</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-section">
+    <h3>Inventario arbóreo</h3>
+    <label class="row">
+      <input type="checkbox" id="toggle-trees" checked />
+      <span>Mostrar árboles</span>
+    </label>
+    <div class="filters">
+      <div class="filter-title">Filtrar por exposición</div>
+      <div class="filter-grid" id="filter-grid"></div>
+    </div>
+    <label class="row">
+      <input type="checkbox" id="only-priority" />
+      <span>Solo árboles prioritarios<br /><small>Altura ≥ Grande · Exposición ≥ 70</small></span>
+    </label>
+  </div>
+
+  <div class="panel-section">
+    <h3>Mapa base</h3>
+    <select id="basemap-select">
+      <option value="osm">OpenStreetMap</option>
+      <option value="positron">Carto Positron (claro)</option>
+      <option value="dark">Carto Dark Matter</option>
+      <option value="esri-imagery">Esri World Imagery</option>
+    </select>
+  </div>
+
+  <div class="panel-footer">
+    <small>Darwin Geospatial · 2026</small>
+  </div>
+</aside>
+
+<button class="panel-toggle" id="panel-toggle" aria-label="Mostrar/ocultar panel">☰</button>
+
+<div id="map"></div>
+
+<div id="popup-template" hidden>
+  <div class="popup">
+    <div class="popup-header">
+      <div class="popup-id">ID <span data-field="id"></span></div>
+      <div class="popup-class" data-field="exposure_class"></div>
+    </div>
+    <div class="popup-name" data-field="descripcion"></div>
+    <div class="popup-sci" data-field="nombre_cientifico"></div>
+    <div class="popup-row"><span>Exposición</span><strong data-field="exposure"></strong></div>
+    <div class="popup-row"><span>Tipo</span><strong data-field="tipo_ubicacion"></strong></div>
+    <div class="popup-row"><span>Altura</span><strong data-field="altura_clase"></strong></div>
+    <div class="popup-row"><span>Perímetro</span><strong data-field="perimetro_clase"></strong></div>
+    <div class="popup-row"><span>Zona</span><strong data-field="zona"></strong></div>
+    <div class="popup-row"><span>Última inspección</span><strong data-field="fecha_inspeccion"></strong></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/pmtiles@3.0.7/dist/pmtiles.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
