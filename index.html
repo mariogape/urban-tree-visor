@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Visor — Cáceres · Exposición al viento</title>
+  <title>Darwin Geospatial · Visor climático urbano</title>
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -11,71 +11,222 @@
 
 <header class="topbar">
   <a class="brand" href="https://darwingeospatial.com" target="_blank" rel="noopener">
-    <img class="brand-logo" src="assets/darwin-logo.png" alt="Darwin Geospatial" />
+    <img class="brand-logo" src="assets/logo_only_nobg.png" alt="Darwin Geospatial" />
     <div class="brand-text">
-      <div class="brand-label">Darwin × INFFE</div>
-      <div class="brand-title">Cáceres · Exposición al viento</div>
+      <div class="brand-label">Darwin Geospatial x INFFE</div>
+      <div class="brand-title">Visor climático urbano</div>
     </div>
   </a>
-  <div class="kpis">
-    <div class="kpi"><div class="kn" id="kpi-trees">—</div><div class="kl">árboles</div></div>
-    <div class="kpi"><div class="kn" id="kpi-priority">—</div><div class="kl">prioritarios</div></div>
+  <div class="top-status">
+    <div>
+      <span class="status-label">Temática</span>
+      <strong id="status-topic">Selecciona una</strong>
+    </div>
+    <div>
+      <span class="status-label">Ciudad</span>
+      <strong id="status-city">-</strong>
+    </div>
   </div>
 </header>
 
 <aside class="panel" id="panel">
-  <div class="panel-section">
-    <h3>Capa de exposición</h3>
-    <label class="row">
-      <input type="checkbox" id="toggle-exposure" checked />
-      <span>Mostrar capa</span>
-    </label>
-    <label class="row">
-      <span>Opacidad</span>
-      <input type="range" id="opacity-exposure" min="0" max="1" step="0.05" value="0.75" />
-    </label>
-    <div class="legend">
-      <div class="legend-bar"></div>
-      <div class="legend-labels">
-        <span>0 abrigado</span>
-        <span>50</span>
-        <span>100 expuesto</span>
+  <section class="panel-hero">
+    <h1>Indicadores urbanos de clima y exposición</h1>
+    <p>Selecciona una temática para abrir sus capas, ciudad y resultados.</p>
+  </section>
+
+  <section class="topic-picker" aria-label="Temáticas disponibles">
+    <button class="topic-card" type="button" data-topic="heat">
+      <span class="topic-icon"><i data-lucide="thermometer-sun"></i></span>
+      <span>
+        <strong>Isla de calor</strong>
+        <small>LST media estival a 10 m</small>
+      </span>
+      <i class="topic-arrow" data-lucide="chevron-right"></i>
+    </button>
+    <button class="topic-card" type="button" data-topic="wind">
+      <span class="topic-icon"><i data-lucide="wind"></i></span>
+      <span>
+        <strong>Viento</strong>
+        <small>Exposición e inventario arbóreo</small>
+      </span>
+      <i class="topic-arrow" data-lucide="chevron-right"></i>
+    </button>
+  </section>
+
+  <section class="detail-shell" id="topic-detail" aria-live="polite">
+    <div class="detail-head">
+      <button class="icon-button" type="button" id="close-topic" aria-label="Cerrar temática">
+        <i data-lucide="chevron-left"></i>
+      </button>
+      <div>
+        <span class="section-kicker">Configuración</span>
+        <h2 id="detail-title">Temática</h2>
       </div>
     </div>
-  </div>
 
-  <div class="panel-section">
-    <h3>Inventario arbóreo</h3>
-    <label class="row">
-      <input type="checkbox" id="toggle-trees" checked />
-      <span>Mostrar árboles</span>
-    </label>
-    <div class="filters">
-      <div class="filter-title">Filtrar por exposición</div>
-      <div class="filter-grid" id="filter-grid"></div>
+    <div class="control-group">
+      <label class="control-label" for="city-select">Ciudad</label>
+      <select id="city-select"></select>
     </div>
-    <label class="row">
-      <input type="checkbox" id="only-priority" />
-      <span>Solo árboles prioritarios<br /><small>Altura ≥ Grande · Exposición ≥ 70</small></span>
-    </label>
-  </div>
 
-  <div class="panel-section">
-    <h3>Mapa base</h3>
-    <select id="basemap-select">
-      <option value="osm">OpenStreetMap</option>
-      <option value="positron">Carto Positron (claro)</option>
-      <option value="dark">Carto Dark Matter</option>
-      <option value="esri-imagery">Esri World Imagery</option>
-    </select>
-  </div>
+    <div class="topic-panel" id="heat-panel">
+      <div class="panel-card">
+        <div class="card-head">
+          <span class="card-icon"><i data-lucide="layers-2"></i></span>
+          <div>
+            <h3>Capas</h3>
+            <p>Temperatura superficial terrestre</p>
+          </div>
+        </div>
+        <label class="row switch-row">
+          <input type="checkbox" id="toggle-heat" checked />
+          <span>Mostrar isla de calor</span>
+        </label>
+        <label class="row">
+          <span>Opacidad</span>
+          <input type="range" id="opacity-heat" min="0" max="1" step="0.05" value="0.7" />
+        </label>
+        <div class="legend heat-legend">
+          <div class="legend-bar"></div>
+          <div class="legend-labels">
+            <span>34 °C</span>
+            <span>45 °C</span>
+            <span>56 °C</span>
+          </div>
+        </div>
+      </div>
 
-  <div class="panel-footer">
-    <small>Darwin Geospatial · 2026</small>
-  </div>
+      <div class="panel-card">
+        <div class="card-head">
+          <span class="card-icon"><i data-lucide="chart-column"></i></span>
+          <div>
+            <h3>Resultados</h3>
+            <p id="heat-result-caption">Producto seleccionado</p>
+          </div>
+        </div>
+        <div class="metric-grid heat-metrics">
+          <div class="metric"><strong>10 m</strong><span>resolución</span></div>
+          <div class="metric"><strong>Jun-Ago</strong><span>temporada</span></div>
+          <div class="metric"><strong>2021-2025</strong><span>periodo</span></div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="card-head">
+          <span class="card-icon"><i data-lucide="trees"></i></span>
+          <div>
+            <h3>Inventario arbóreo</h3>
+            <p>LST extraída en cada posición</p>
+          </div>
+        </div>
+        <label class="row switch-row">
+          <input type="checkbox" id="toggle-heat-trees" checked />
+          <span>Mostrar árboles</span>
+        </label>
+        <div class="filter-grid heat-filter-grid" id="heat-filter-grid"></div>
+        <label class="row switch-row separated">
+          <input type="checkbox" id="only-hot-trees" />
+          <span>Solo árboles en entorno caliente<br /><small>LST ≥ 45 °C</small></span>
+        </label>
+        <div class="metric-grid heat-tree-metrics">
+          <div class="metric"><strong id="kpi-heat-trees">-</strong><span>árboles</span></div>
+          <div class="metric"><strong id="kpi-heat-hot">-</strong><span>≥ 45 °C</span></div>
+          <div class="metric"><strong id="kpi-heat-mean">-</strong><span>LST media</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic-panel" id="wind-panel">
+      <div class="panel-card">
+        <div class="card-head">
+          <span class="card-icon"><i data-lucide="layers-2"></i></span>
+          <div>
+            <h3>Capas</h3>
+            <p>Exposición al viento e inventario</p>
+          </div>
+        </div>
+        <label class="row switch-row">
+          <input type="checkbox" id="toggle-exposure" checked />
+          <span>Mostrar exposición</span>
+        </label>
+        <label class="row">
+          <span>Opacidad</span>
+          <input type="range" id="opacity-exposure" min="0" max="1" step="0.05" value="0.75" />
+        </label>
+        <div class="legend">
+          <div class="legend-bar"></div>
+          <div class="legend-labels">
+            <span>0 abrigado</span>
+            <span>50</span>
+            <span>100 expuesto</span>
+          </div>
+        </div>
+        <label class="row switch-row separated">
+          <input type="checkbox" id="toggle-trees" checked />
+          <span>Mostrar árboles</span>
+        </label>
+      </div>
+
+      <div class="panel-card">
+        <div class="card-head">
+          <span class="card-icon"><i data-lucide="filter"></i></span>
+          <div>
+            <h3>Filtros</h3>
+            <p>Clasificación de exposición</p>
+          </div>
+        </div>
+        <div class="filter-grid" id="filter-grid"></div>
+        <label class="row switch-row separated">
+          <input type="checkbox" id="only-priority" />
+          <span>Solo árboles prioritarios<br /><small>Altura ≥ Grande · Exposición ≥ 70</small></span>
+        </label>
+      </div>
+
+      <div class="panel-card">
+        <div class="card-head">
+          <span class="card-icon"><i data-lucide="chart-no-axes-column"></i></span>
+          <div>
+            <h3>Resultados</h3>
+            <p>Inventario arbóreo de Cáceres</p>
+          </div>
+        </div>
+        <div class="metric-grid">
+          <div class="metric"><strong id="kpi-trees">-</strong><span>árboles</span></div>
+          <div class="metric"><strong id="kpi-priority">-</strong><span>prioritarios</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-card basemap-card">
+      <div class="card-head">
+        <span class="card-icon"><i data-lucide="map"></i></span>
+        <div>
+          <h3>Mapa base</h3>
+          <p>Contexto cartográfico</p>
+        </div>
+      </div>
+      <select id="basemap-select">
+        <option value="osm">OpenStreetMap</option>
+        <option value="positron">Carto Positron</option>
+        <option value="dark">Carto Dark Matter</option>
+        <option value="esri-imagery">Esri World Imagery</option>
+      </select>
+    </div>
+  </section>
+
+  <footer class="panel-footer">
+    <img src="assets/logo_only_nobg.png" alt="" />
+    <div>
+      <span>Prototype by <a href="https://darwingeospatial.com" target="_blank" rel="noopener">Darwin Geospatial</a></span>
+      <a href="mailto:contact@darwingeospatial.com">contact@darwingeospatial.com</a>
+    </div>
+  </footer>
 </aside>
 
-<button class="panel-toggle" id="panel-toggle" aria-label="Mostrar/ocultar panel">☰</button>
+<button class="panel-toggle" id="panel-toggle" aria-label="Mostrar/ocultar panel">
+  <i data-lucide="panel-left"></i>
+</button>
 
 <div id="map"></div>
 
@@ -96,8 +247,27 @@
   </div>
 </div>
 
+<div id="heat-popup-template" hidden>
+  <div class="popup">
+    <div class="popup-header">
+      <div class="popup-id">ID <span data-field="tree_id"></span></div>
+      <div class="popup-class heat" data-field="heat_class"></div>
+    </div>
+    <div class="popup-name" data-field="species"></div>
+    <div class="popup-sci" data-field="inventory_source"></div>
+    <div class="popup-row"><span>LST</span><strong data-field="lst_c"></strong></div>
+    <div class="popup-row"><span>Zona</span><strong data-field="zone"></strong></div>
+    <div class="popup-row"><span>Localización</span><strong data-field="location"></strong></div>
+    <div class="popup-row"><span>Tipo urbano</span><strong data-field="urban_type"></strong></div>
+    <div class="popup-row"><span>Altura</span><strong data-field="height_m"></strong></div>
+    <div class="popup-row"><span>Perímetro</span><strong data-field="perimeter_cm"></strong></div>
+    <div class="popup-row"><span>Riego</span><strong data-field="irrigation"></strong></div>
+  </div>
+</div>
+
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/pmtiles@3.0.7/dist/pmtiles.js"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 <script src="app.js"></script>
 
 </body>

@@ -16,9 +16,13 @@ Sin servidor: el visor es un único `index.html` que se sirve desde cualquier st
 ├── app.js
 ├── data/
 │   ├── exposure.pmtiles      # capa de exposición (raster pyramid colorizado)
+│   ├── heat_*.pmtiles        # capas LST / isla de calor (raster pyramid colorizado)
+│   ├── heat_inventory_*.geojson # inventarios arbóreos con LST muestreada
 │   └── inventario.geojson    # 48 782 árboles activos con valor de exposición
 ├── tools/
 │   ├── build_exposure_pmtiles.py
+│   ├── build_heat_inventory_geojson.py
+│   ├── build_heat_pmtiles.py
 │   ├── build_inventory_geojson.py
 │   └── build_all.py
 └── source/                   # gitignored — capas fuente
@@ -67,6 +71,19 @@ python tools/build_all.py --skip-geojson    # solo el PMTiles
 3. Genera la pirámide XYZ para los zooms `--zoom-min..--zoom-max` (por defecto 11–18).
 4. Empaqueta los tiles PNG en un único `.pmtiles` v3.
 
+`tools/build_heat_pmtiles.py` genera las capas de **isla de calor** con el mismo formato
+runtime que la exposición al viento: PMTiles v3, teselas PNG RGBA de 256 px, NoData
+transparente y reproyección previa a EPSG:3857. La escala visual actual es común para todos
+los ámbitos: **34-56 °C**, para que Aranjuez y Majadahonda sean comparables.
+
+```bash
+python tools/build_heat_pmtiles.py \
+  --input ../LST-downscaling-to-10m-GEE/outputs/aranjuez/lst_mean_06-07-08_2021_2025_10m.tif \
+  --output data/heat_aranjuez.pmtiles \
+  --name "Isla de calor - Aranjuez" \
+  --vmin 34 --vmax 56
+```
+
 ### Pipeline shp → GeoJSON
 
 `tools/build_inventory_geojson.py`:
@@ -76,9 +93,15 @@ python tools/build_all.py --skip-geojson    # solo el PMTiles
 3. Muestrea el raster de exposición en cada punto y añade `exposure` + `exposure_class`.
 4. Reproyecta a EPSG:4326 y exporta GeoJSON con un set mínimo de atributos.
 
+`tools/build_heat_inventory_geojson.py` genera los inventarios de Aranjuez y Majadahonda
+para el visor de isla de calor. Reutiliza la lógica del repo LST para normalizar campos,
+muestrear `lst_c`, asignar `heat_class` y exportar un GeoJSON ligero en EPSG:4326.
+
 ## Funcionalidades del visor
 
 - Toggle de la capa de exposición + slider de opacidad.
+- Toggle de isla de calor + selector de ámbito + slider de opacidad.
+- Inventario arbóreo para isla de calor, clusterizado, filtrable por clase térmica y con popup LST.
 - Toggle del inventario, **clusterizado** automáticamente al zoom-out.
 - Filtro por clase de exposición (chips clicables, con conteo por clase).
 - Filtro «solo árboles prioritarios» (altura ≥ Grande **y** exposición ≥ 70).
